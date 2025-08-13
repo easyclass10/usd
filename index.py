@@ -1,4 +1,4 @@
-import smtplib
+7import smtplib
 from email.mime.text import MIMEText
 import requests
 import time
@@ -24,7 +24,7 @@ def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
 # --- Script principal ---
 if __name__ == "__main__":
     api_url = "https://api.exchangerate-api.com/v4/latest/USD"
-    limite = 4021.0
+    limite = 4027.0
 
     remitente = "easyclass.1help@gmail.com"
     clave_app = "dcnp ycfv qgqq aoqe"  # Clave de aplicación de Google
