@@ -1,10 +1,13 @@
-# .github/workflows/main.yml CORREGIDO
+# .github/workflows/main.yml
 name: Ejecutar Script Python Periodicamente
 
 on:
+  # Se ejecuta al inicio de cada hora
   schedule:
-    - cron: "*/1 * * * *"  # cada 5 minutos
-  workflow_dispatch:      # permite ejecutar manualmente
+    - cron: '0 * * * *'
+  
+  # Permite ejecutar el workflow manualmente desde la pestaña "Actions" de GitHub
+  workflow_dispatch: {}
 
 jobs:
   run-python:
@@ -17,14 +20,17 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11' # Las versiones se suelen poner entre comillas
 
       - name: Instalar dependencias
         run: pip install requests
+        # Sugerencia: Si tu proyecto crece, considera usar un archivo requirements.txt
+        # run: |
+        #   pip install -r requirements.txt
 
       - name: Ejecutar script
         env:
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
-        run: python index.py  # <-- ¡ESTA ES LA LÍNEA CORREGIDA!
+        run: python index.py
