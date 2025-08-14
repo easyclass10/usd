@@ -1,12 +1,8 @@
-# .github/workflows/main.yml
 name: Ejecutar Script Python Periodicamente
 
 on:
-  # Se ejecuta al inicio de cada hora
   schedule:
     - cron: '0 * * * *'
-  
-  # Permite ejecutar el workflow manualmente desde la pestaña "Actions" de GitHub
   workflow_dispatch: {}
 
 jobs:
@@ -20,13 +16,11 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # Las versiones se suelen poner entre comillas
+          python-version: '3.11'
 
       - name: Instalar dependencias
-        run: pip install requests
-        # Sugerencia: Si tu proyecto crece, considera usar un archivo requirements.txt
-        # run: |
-        #   pip install -r requirements.txt
+        run: |
+          pip install yfinance pandas
 
       - name: Ejecutar script
         env:
