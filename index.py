@@ -6,10 +6,10 @@ import os  # Para leer variables de entorno
 # --- Función para obtener el valor del dólar usando yfinance ---
 def obtener_tasa():
     ticker = yf.Ticker("COP=X")
-    data = ticker.history(period="1d", interval="1m")  # Datos del día en intervalos de 1 min
+    data = ticker.history(period="1d", interval="1m")  # últimos datos del día
     if data.empty:
-        raise ValueError("No se pudo obtener la tasa COP/USD.")
-    return data["Close"].iloc[-1]  # Último valor
+        raise ValueError("No se pudo obtener la tasa USD/COP")
+    return data["Close"].iloc[-1]  # último valor de cierre
 
 # --- Función para enviar el correo ---
 def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
@@ -24,7 +24,7 @@ def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
 
 # --- Script principal ---
 if __name__ == "__main__":
-    limite = 4070.0
+    limite = 4100.0
 
     # Cargar secretos desde las variables de entorno
     remitente_email = os.environ.get("SENDER_EMAIL")
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     if usd_cop < limite:
         asunto = "Alerta: Dólar bajo"
-        mensaje = f"El dólar está a {usd_cop:.2f} COP, por debajo de {limite} COP."
+        mensaje = f"El dólar está a {tasa:.2f} COP."
         try:
             enviar_correo(remitente_email, clave_aplicacion, destinatario_email, asunto, mensaje)
             print("Correo enviado correctamente.")
