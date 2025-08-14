@@ -1,15 +1,15 @@
-# main.py modificado
 import smtplib
 from email.mime.text import MIMEText
-import requests
-import os # Importar el módulo os
+import yfinance as yf
+import os  # Para leer variables de entorno
 
-# --- Función para obtener el valor del dólar ---
-def obtener_tasa(api_url):
-    resp = requests.get(api_url)
-    resp.raise_for_status()
-    data = resp.json()
-    return data["rates"]["COP"]
+# --- Función para obtener el valor del dólar usando yfinance ---
+def obtener_tasa():
+    ticker = yf.Ticker("COP=X")
+    data = ticker.history(period="1d", interval="1m")  # Datos del día en intervalos de 1 min
+    if data.empty:
+        raise ValueError("No se pudo obtener la tasa COP/USD.")
+    return data["Close"].iloc[-1]  # Último valor
 
 # --- Función para enviar el correo ---
 def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
@@ -24,31 +24,36 @@ def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
 
 # --- Script principal ---
 if __name__ == "__main__":
-    api_url = "https://api.exchangerate-api.com/v4/latest/USD"
-    limite = 4030.0
+    limite = 4070.0
 
-    # --- Cargar secretos desde las variables de entorno ---
-    # os.environ.get('NOMBRE_DEL_SECRET')
+    # Cargar secretos desde las variables de entorno
     remitente_email = os.environ.get("SENDER_EMAIL")
     clave_aplicacion = os.environ.get("APP_PASSWORD")
     destinatario_email = os.environ.get("RECIPIENT_EMAIL")
     
-    # --- Validar que los secretos se cargaron ---
+    # Validar que se cargaron todos los secretos
     if not all([remitente_email, clave_aplicacion, destinatario_email]):
-        print("Error: Faltan una o más variables de entorno (SENDER_EMAIL, APP_PASSWORD, RECIPIENT_EMAIL).")
+        print("Error: Faltan variables de entorno (SENDER_EMAIL, APP_PASSWORD, RECIPIENT_EMAIL).")
         exit(1)
 
     try:
-        tasa = obtener_tasa(api_url)
-        print(f"Tasa actual USD→COP: {tasa}")
+        tasa = obtener_tasa()
+        print(f"Tasa actual COP/USD: {tasa}")
     except Exception as e:
         print("Error obteniendo tasa:", e)
         exit(1)
 
-    if tasa < limite:
-        asunto = "Alerta: Dólar bajo"
-        mensaje = f"El dólar está a {tasa:.2f} COP, por debajo de {limite} COP."
+    # Como COP=X es pesos colombianos por dólar invertido, invertimos el valor si quieres USD→COP
+    usd_cop = 1 / tasa if tasa != 0 else None
+    if usd_cop is None:
+        print("Error: tasa inválida.")
+        exit(1)
 
+    print(f"Tasa actual USD→COP: {usd_cop}")
+
+    if usd_cop < limite:
+        asunto = "Alerta: Dólar bajo"
+        mensaje = f"El dólar está a {usd_cop:.2f} COP, por debajo de {limite} COP."
         try:
             enviar_correo(remitente_email, clave_aplicacion, destinatario_email, asunto, mensaje)
             print("Correo enviado correctamente.")
