@@ -35,7 +35,6 @@ if __name__ == "__main__":
     if not all([remitente_email, clave_aplicacion, destinatario_email]):
         print("Error: Faltan variables de entorno (SENDER_EMAIL, APP_PASSWORD, RECIPIENT_EMAIL).")
         exit(1)
-
     try:
         tasa = obtener_tasa()
         print(f"Tasa actual COP/USD: {tasa}")
@@ -43,15 +42,7 @@ if __name__ == "__main__":
         print("Error obteniendo tasa:", e)
         exit(1)
 
-    # Como COP=X es pesos colombianos por dólar invertido, invertimos el valor si quieres USD→COP
-    usd_cop = 1 / tasa if tasa != 0 else None
-    if usd_cop is None:
-        print("Error: tasa inválida.")
-        exit(1)
-
-    print(f"Tasa actual USD→COP: {usd_cop}")
-
-    if usd_cop < limite:
+    if tasa < limite:
         asunto = "Alerta: Dólar bajo"
         mensaje = f"El dólar está a {tasa:.2f} COP."
         try:
