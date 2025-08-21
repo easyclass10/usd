@@ -24,7 +24,7 @@ def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
 
 # --- Script principal ---
 if __name__ == "__main__":
-    limite = 4100.0
+    limite = 4025.0
 
     # Cargar secretos desde las variables de entorno
     remitente_email = os.environ.get("SENDER_EMAIL")
