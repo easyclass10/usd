@@ -59,7 +59,7 @@ if __name__ == "__main__":
         print("No se envía correo. Tasa por encima del límite.")
 
     lista_tickets=["BTC-USD","ETH-USD"]
-    limites=[108600,3900]
+    limites=[108600,4050]
     alertas = []
     for ticket, limite in zip(lista_tickets, limites):
         mensaje_alerta = enviar_alerta_limite(ticket, limite)
