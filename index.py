@@ -49,15 +49,7 @@ if __name__ == "__main__":
     if not all([remitente_email, clave_aplicacion, destinatario_email]):
         print("Error: Faltan variables de entorno (SENDER_EMAIL, APP_PASSWORD, RECIPIENT_EMAIL).")
         exit(1)
-    try:
-        tasa = obtener_tasa()
-        btc = obtener_btc()
-        print(f"Tasa actual COP/USD: {tasa}")
-        print(f"BTC-USD: {btc}")
-    except Exception as e:
-        print("Error obteniendo tasa:", e)
-        exit(1)
-
+        
     if tasa < limite:
         asunto = "Alerta: Dólar bajo"
         mensaje = f"El dólar está a {tasa:.2f} COP."
