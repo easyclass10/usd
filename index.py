@@ -94,4 +94,5 @@ if __name__ == "__main__":
         print("No se envía correo. Tasa por encima del límite.")
     
     # enviar_alerta_limite(ticket,limite)
-    enviar_alerta_limite("ETH-USD",3800)
+    enviar_alerta_limite("ETH-USD",4100)
+    enviar_alerta_limite("BTC-USD",8000000)
