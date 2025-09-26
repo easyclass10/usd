@@ -36,8 +36,8 @@ def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
         server.login(remitente, clave_app)
         server.send_message(msg)
 
-def enviar_alerta_limite(ticket,limite)
-    valor=obtener_ticket(ticket):
+def enviar_alerta_limite(ticket,limite):
+    valor=obtener_ticket(ticket)
     if valor < limite:
         asunto = f"Alerta {ticket}"
         mensaje = f"{ticket}: {valor:.2f} USD."
