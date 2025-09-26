@@ -3,6 +3,13 @@ from email.mime.text import MIMEText
 import yfinance as yf
 import os  # Para leer variables de entorno
 
+def obtener_ticket(ticket):
+    ticker = yf.Ticker(ticket)
+    data = ticker.history(period="1d", interval="1m")  # últimos datos del día
+    if data.empty:
+        raise ValueError(f"No se pudo obtener la tasa {ticket}")
+    return data["Close"].iloc[-1]  # último valor de cierre
+
 def obtener_btc():
     ticker = yf.Ticker("BTC-USD")
     data = ticker.history(period="1d", interval="1m")  # últimos datos del día
@@ -28,6 +35,19 @@ def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(remitente, clave_app)
         server.send_message(msg)
+
+def enviar_alerta_limite(ticket,limite)
+    valor=obtener_ticket(ticket):
+    if valor < limite:
+        asunto = f"Alerta {ticket}"
+        mensaje = f"{ticket}: {valor:.2f} USD."
+        try:
+            enviar_correo(remitente_email, clave_aplicacion, destinatario_email, asunto, mensaje)
+            print("Correo enviado correctamente.")
+        except Exception as e:
+            print("Error enviando correo:", e)
+    else:
+        print("No se envía correo. Tasa por encima del límite.")
 
 # --- Script principal ---
 if __name__ == "__main__":
@@ -72,4 +92,6 @@ if __name__ == "__main__":
             print("Error enviando correo:", e)
     else:
         print("No se envía correo. Tasa por encima del límite.")
-
+    
+    # enviar_alerta_limite(ticket,limite)
+    enviar_alerta_limite("ETH-USD",3800)
