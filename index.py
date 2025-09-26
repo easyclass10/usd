@@ -10,13 +10,6 @@ def obtener_ticket(ticket):
         raise ValueError(f"No se pudo obtener la tasa {ticket}")
     return data["Close"].iloc[-1]  # último valor de cierre
 
-def obtener_btc():
-    ticker = yf.Ticker("BTC-USD")
-    data = ticker.history(period="1d", interval="1m")  # últimos datos del día
-    if data.empty:
-        raise ValueError("No se pudo obtener la tasa BTC")
-    return data["Close"].iloc[-1]  # último valor de cierre
-
 # --- Función para obtener el valor del dólar usando yfinance ---
 def obtener_tasa():
     ticker = yf.Ticker("COP=X")
@@ -39,13 +32,7 @@ def enviar_correo(remitente, clave_app, destinatario, asunto, mensaje):
 def enviar_alerta_limite(ticket,limite):
     valor=obtener_ticket(ticket)
     if valor < limite:
-        asunto = f"Alerta {ticket}"
-        mensaje = f"{ticket}: {valor:.2f} USD."
-        try:
-            enviar_correo(remitente_email, clave_aplicacion, destinatario_email, asunto, mensaje)
-            print("Correo enviado correctamente.")
-        except Exception as e:
-            print("Error enviando correo:", e)
+        return f"{ticket}: {valor:.2f} USD."
     else:
         print("No se envía correo. Tasa por encima del límite.")
 
@@ -82,17 +69,21 @@ if __name__ == "__main__":
     else:
         print("No se envía correo. Tasa por encima del límite.")
 
-    if btc < 108600:
-        asunto = "Alerta BTC"
-        mensaje = f"BTC: {btc:.2f} USD."
+    lista_tickets=["BTC-USD","ETH-USD"]
+    limites=[1000000,4100]
+    alertas = []
+    for ticket, limite in zip(lista_tickets, limites):
+        mensaje_alerta = enviar_alerta_limite(ticket, limite)
+        if mensaje_alerta:
+            alertas.append(mensaje_alerta)
+            
+    if alertas:
+        mensaje_final = "\n".join(alertas)
+        asunto = "Alertas de Criptomonedas"
         try:
-            enviar_correo(remitente_email, clave_aplicacion, destinatario_email, asunto, mensaje)
-            print("Correo enviado correctamente.")
+            enviar_correo(remitente_email, clave_aplicacion, destinatario_email, asunto, mensaje_final)
+            print("Correo con alertas enviado correctamente.")
         except Exception as e:
             print("Error enviando correo:", e)
     else:
-        print("No se envía correo. Tasa por encima del límite.")
-    
-    # enviar_alerta_limite(ticket,limite)
-    enviar_alerta_limite("ETH-USD",4100)
-    enviar_alerta_limite("BTC-USD",8000000)
+        print("No se encontraron alertas para enviar.")
