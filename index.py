@@ -39,17 +39,14 @@ def enviar_alerta_limite(ticket,limite):
 # --- Script principal ---
 if __name__ == "__main__":
     limite = 3880
-
-    # Cargar secretos desde las variables de entorno
     remitente_email = os.environ.get("SENDER_EMAIL")
     clave_aplicacion = os.environ.get("APP_PASSWORD")
     destinatario_email = os.environ.get("RECIPIENT_EMAIL")
-    
-    # Validar que se cargaron todos los secretos
     if not all([remitente_email, clave_aplicacion, destinatario_email]):
         print("Error: Faltan variables de entorno (SENDER_EMAIL, APP_PASSWORD, RECIPIENT_EMAIL).")
         exit(1)
-        
+
+    tasa=obtener_tasa()
     if tasa < limite:
         asunto = "Alerta: Dólar bajo"
         mensaje = f"El dólar está a {tasa:.2f} COP."
